@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+  proxy:
+    build: .
+    links:
+      - db
+
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      WORDPRESS_DB_HOST: proxy
+      WORDPRESS_DB_USER: postgres
+      WORDPRESS_DB_PASSWORD: postgres
+      WORDPRESS_DB_NAME: postgres
+    links:
+      - proxy
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    links:
+      - db
+      - proxy
